@@ -1,0 +1,480 @@
+/* ============================================================
+   POC Cards — Front-end styles
+   ============================================================ */
+
+/* ── Filter bar ─────────────────────────────────────────── */
+.poc-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.poc-filter-btn {
+  padding: 5px 15px !important;
+  border-radius: 999px;
+  border: 2px solid #ccc !important;
+  background: transparent !important;
+  cursor: pointer;
+  font-size: 14px !important;
+  transition: all 0.2s ease;
+  color: #444 !important;
+}
+
+.poc-filter-btn.poc-filter-active,
+.poc-filter-btn:hover {
+  background: #7c2273 !important;
+  color: #fff !important;
+  border-color: #7c2273 !important;
+}
+
+/* ── Navigation ─────────────────────────────────────────── */
+.poc-nav-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 650px;
+  margin: 0 auto 16px;
+  padding: 0 8px;
+}
+
+.poc-nav-btn {
+  padding: 5px 15px !important;
+  border-radius: 999px;
+  border: none;
+  background: #5a3e8e;
+  color: #fff;
+  font-size: 14px !important;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.poc-nav-btn:disabled,
+.poc-nav-btn[disabled] {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.poc-nav-counter {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ── Viewport & track ───────────────────────────────────── */
+.poc-cards-viewport {
+  overflow: hidden;
+  width: 700px;
+  max-width: 100%;
+  margin: 0 auto;
+    padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+.poc-cards-track {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: fit-content;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;  
+  padding-left: 25px;
+  gap: 50px;
+  padding-right: 25px;
+}
+
+.poc-cards-track > .flip-card {
+  flex: 0 0 650px;
+  min-width: 650px;
+  max-width: 650px;
+  box-sizing: border-box;
+}
+
+/* ── Card 3D flip ───────────────────────────────────────── */
+.flip-card {
+  perspective: 1000px;
+  position: relative;
+  transition: height 0.6s ease;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Front face — actions (silver/gold) — visible initially */
+.flip-card-front {
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+/* Back face — steps/links — shown after flip */
+.flip-card-back {
+  transform: rotateY(180deg);
+}
+
+/* ── Card front content ─────────────────────────────────── */
+.poc-category-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #f0e8ff;
+  color: #5a3e8e;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.poc-card-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e0d8;
+  margin-bottom: 10px;
+}
+
+.poc-card-title {
+  font-size: 19px !important;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.poc-card-description {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+/* ── Action blocks (silver / gold) ─────────────────────── */
+.poc-action-block {
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.poc-action-block.silver {
+  background: #eaf2f5;
+}
+
+.poc-action-block.gold {
+  background: #fdf3dc;
+}
+
+.poc-block-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.poc-block-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.poc-action-block.silver .poc-block-icon { color: #7a9fad; }
+.poc-action-block.gold   .poc-block-icon { color: #c8960c; }
+
+.poc-block-title {
+  font-size: 14px !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+  flex: 1;
+}
+
+.poc-action-block.silver .poc-block-title { color: #5a8090; }
+.poc-action-block.gold   .poc-block-title { color: #c8960c; }
+
+.poc-action-text {
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+
+.poc-block-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+}
+
+/* ── Stars ──────────────────────────────────────────────── */
+.poc-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.poc-stars-label {
+  font-size: 13px;
+  margin-right: 4px;
+}
+
+.poc-star svg {
+  width: 16px;
+  height: 16px;
+}
+
+.poc-star-on  { color: inherit; opacity: 1; }
+.poc-star-off { color: inherit; opacity: 0.25; }
+
+.poc-action-block.silver .poc-star { color: #7a9fad; }
+.poc-action-block.gold   .poc-star { color: #c8960c; }
+
+.poc-action-block.silver .toggle-label-off,
+.poc-action-block.silver .toggle-label-on { color: #5a8090; }
+.poc-action-block.gold   .toggle-label-off,
+.poc-action-block.gold   .toggle-label-on { color: #c8960c; }
+
+/* ── ULike ──────────────────────────────────────────────── */
+.poc-ulike {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+.wp_ulike_btn {
+  display: none !important;
+}
+
+.wpulike-robeen .count-box {
+  padding: 0 !important;
+}
+
+/* ── Toggle switch ──────────────────────────────────────── */
+.poc-toggle-area {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.toggle-label-off,
+.toggle-label-on {
+  font-size: 12px;
+  transition: opacity 0.25s ease;
+}
+
+.toggle-label-off { opacity: 1; }
+.toggle-label-on  { opacity: 0.35; }
+
+.poc-action-block.poc-done .toggle-label-off { opacity: 0.35; }
+.poc-action-block.poc-done .toggle-label-on  { opacity: 1; }
+
+.poc-toggle-btn {
+  background: transparent;
+  border: none !important;
+  padding: 0 !important;
+  cursor: pointer;
+}
+
+.poc-toggle-track {
+  display: block;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: #d8d8d8;
+  position: relative;
+  transition: background 0.25s ease;
+}
+
+.poc-toggle-thumb {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.poc-action-block.poc-done .poc-toggle-thumb {
+  transform: translateX(20px);
+}
+
+.poc-action-block.silver.poc-done .poc-toggle-track { background: #7a9fad; }
+.poc-action-block.gold.poc-done   .poc-toggle-track { background: #c8960c; }
+
+/* ── Flip button ────────────────────────────────────────── */
+.poc-flip-btn {
+  margin-top: 12px;
+  padding: 10px 16px !important;
+  border-radius: 50px !important;
+  background: #6816d2  !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  text-align: left;
+  transition: background 0.2s ease;
+  color: #fff !important;
+}
+
+
+/* ── Card back content ──────────────────────────────────── */
+.poc-back-subtitle {
+  font-size: 19px !important;
+  font-weight: 400 !important;
+  margin: 16px 0 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e0d8;
+}
+
+.poc-back-intro {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.poc-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+    padding-top: 10px;
+}
+
+.poc-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+.poc-step-number {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #7c2273;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Links ──────────────────────────────────────────────── */
+.poc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  justify-content: center;  
+  padding-top: 10px;
+}
+
+.poc-link-btn {
+  padding: 10px 15px;
+  border-radius: 999px;
+  background: transparent;
+  color: #5a3e8e;
+  text-decoration: none;
+  font-size: 19px;
+  font-weight: 600;
+  border: 1px solid rgba(90,62,142,0.25);
+  box-shadow: 2px 2px 6px 0px rgba(0, 0, 0, 0.06);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.poc-link-btn:hover {
+  background: rgba(90,62,142,0.06);
+  box-shadow: 2px 2px 10px 0px rgba(0, 0, 0, 0.10);
+}
+
+/* ── Testimonial ────────────────────────────────────────── */
+.poc-testimonial {
+  background: #f9f9f9;
+  border-left: 3px solid #5a3e8e;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+/* ── Share buttons ──────────────────────────────────────── */
+.poc-share-intro {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 10px;
+  padding-top: 10px;
+}
+
+.poc-share-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-top: 10px;
+}
+
+.poc-share-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: filter 0.2s ease;
+    display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.poc-share-btn:hover {
+  filter: brightness(1.1);
+}
+
+.poc-share-icon {
+  fill: #fff;
+  width: 16px;
+  height: 16px;
+}
+
+.poc-share-btn.email     { background: #7c2273; }
+.poc-share-btn.whatsapp  { background: #25D366; }
+.poc-share-btn.telegram  { background: #0088cc; }
+.poc-share-btn.facebook  { background: #1877F2; }
+.poc-share-btn.linkedin  { background: #0A66C2; }
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 680px) {
+  .poc-cards-viewport {
+    width: 100%;
+  }
+  .poc-cards-track > .flip-card {
+    flex: 0 0 100vw;
+    min-width: 100vw;
+    max-width: 100vw;
+  }
+}
