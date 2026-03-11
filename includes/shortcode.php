@@ -21,9 +21,12 @@ add_shortcode( 'poc_cards', function ( $atts ) {
         'post_type'      => 'poc_card',
         'posts_per_page' => intval( $atts['limit'] ),
         'post_status'    => 'publish',
-        'meta_key'       => 'poc_order',
-        'orderby'        => 'meta_value_num',
-        'order'          => 'ASC',
+        'meta_query'     => [
+            'relation'      => 'OR',
+            'order_clause'  => [ 'key' => 'poc_order', 'compare' => 'EXISTS',     'type' => 'NUMERIC' ],
+            'order_missing' => [ 'key' => 'poc_order', 'compare' => 'NOT EXISTS' ],
+        ],
+        'orderby'        => [ 'order_clause' => 'ASC', 'title' => 'ASC' ],
     ];
 
     if ( ! empty( $atts['category'] ) ) {
@@ -326,9 +329,12 @@ add_shortcode( 'poc_cards_list', function ( $atts ) {
         'post_type'      => 'poc_card',
         'posts_per_page' => intval( $atts['limit'] ),
         'post_status'    => 'publish',
-        'meta_key'       => 'poc_order',
-        'orderby'        => 'meta_value_num',
-        'order'          => 'ASC',
+        'meta_query'     => [
+            'relation'      => 'OR',
+            'order_clause'  => [ 'key' => 'poc_order', 'compare' => 'EXISTS',     'type' => 'NUMERIC' ],
+            'order_missing' => [ 'key' => 'poc_order', 'compare' => 'NOT EXISTS' ],
+        ],
+        'orderby'        => [ 'order_clause' => 'ASC', 'title' => 'ASC' ],
     ];
 
     if ( ! empty( $atts['category'] ) ) {
