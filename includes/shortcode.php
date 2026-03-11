@@ -208,7 +208,7 @@ add_shortcode( 'poc_cards', function ( $atts ) {
                 if ( $link_ch ) $country_links[] = [ 'label' => '🇨🇭',      'url' => $link_ch ];
                 ?>
                 <?php if ( ! empty( $country_links ) ) : ?>
-                <h3 class="poc-back-subtitle">🔗 Mehr Infos &amp; Anbieter zur direkten Umsetzung</h3>
+                <h3 class="poc-back-subtitle">🔗 Links zur Inspiration und für nächste Schritte</h3>
                 <div class="poc-links">
                     <?php foreach ( $country_links as $country_link ) : ?>
                         <a class="poc-link-btn" href="<?php echo esc_url( $country_link['url'] ); ?>" target="_blank" rel="noopener noreferrer">
