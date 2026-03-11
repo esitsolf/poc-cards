@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
     el.addEventListener('click', function (e) {
       if (e.target === el) closePopup();
     });
+    el.style.display = 'none';
   }());
 
   function showPopup(type) {
@@ -170,11 +171,12 @@ document.addEventListener('DOMContentLoaded', function () {
       };
     }
     overlay.classList.add('poc-popup-open');
+    overlay.style.display = 'flex';
   }
 
   function closePopup() {
     var overlay = document.getElementById('poc-popup-overlay');
-    if (overlay) overlay.classList.remove('poc-popup-open');
+    if (overlay) overlay.style.display = 'none';
   }
 
   // ── Card navigation ────────────────────────────────────────────
