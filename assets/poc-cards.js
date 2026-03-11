@@ -59,6 +59,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     triggerUlike(ulikeId);
+    updateProgressBars();
+    updateListCards();
+
+    if (isDone) {
+      showPopup(block.classList.contains('silver') ? 'silver' : 'gold');
+    }
   });
 
   // Restore toggle states from localStorage
@@ -71,6 +77,105 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     } catch (err) {}
   });
+
+  // ── Progress bars ──────────────────────────────────────────────
+  function updateProgressBars() {
+    document.querySelectorAll('.poc-progress-wrap').forEach(function (wrap) {
+      var total = parseInt(wrap.dataset.total, 10) || 0;
+      if (total === 0) return;
+      var ids;
+      try { ids = JSON.parse(wrap.dataset.postIds); } catch (e) { return; }
+
+      var silverDone = 0, goldDone = 0;
+      ids.forEach(function (id) {
+        try {
+          if (localStorage.getItem('poc_card_' + id + '_silver') === '1') silverDone++;
+          if (localStorage.getItem('poc_card_' + id + '_gold')   === '1') goldDone++;
+        } catch (e) {}
+      });
+
+      var silverPct = Math.round(silverDone / total * 100);
+      var goldPct   = Math.round(goldDone   / total * 100);
+
+      var fillS = wrap.querySelector('.poc-fill-silver');
+      var fillG = wrap.querySelector('.poc-fill-gold');
+      var cntS  = wrap.querySelector('.poc-pr-count-silver');
+      var cntG  = wrap.querySelector('.poc-pr-count-gold');
+
+      if (fillS) fillS.style.width = silverPct + '%';
+      if (fillG) fillG.style.width = goldPct   + '%';
+      if (cntS)  cntS.textContent  = silverDone + ' von ' + total + ' erledigt';
+      if (cntG)  cntG.textContent  = goldDone   + ' von ' + total + ' erledigt';
+    });
+  }
+
+  updateProgressBars();
+
+  // ── List card states ───────────────────────────────────────────
+  function updateListCards() {
+    document.querySelectorAll('.poc-list-card').forEach(function (card) {
+      var sDone = !!card.querySelector('.poc-action-block.silver.poc-done');
+      var gDone = !!card.querySelector('.poc-action-block.gold.poc-done');
+      card.classList.remove('state-silver', 'state-gold', 'state-both');
+      if (sDone && gDone) card.classList.add('state-both');
+      else if (gDone)     card.classList.add('state-gold');
+      else if (sDone)     card.classList.add('state-silver');
+    });
+  }
+
+  updateListCards();
+
+  // ── Completion popup ───────────────────────────────────────────
+  (function injectPopup() {
+    if (document.getElementById('poc-popup-overlay')) return;
+    var el = document.createElement('div');
+    el.id = 'poc-popup-overlay';
+    el.className = 'poc-popup-overlay';
+    el.innerHTML =
+      '<div class="poc-popup-box">' +
+        '<div class="poc-popup-icon" id="poc-popup-icon"></div>' +
+        '<h2 class="poc-popup-title" id="poc-popup-title"></h2>' +
+        '<p class="poc-popup-body" id="poc-popup-body"></p>' +
+        '<button class="poc-popup-btn" id="poc-popup-btn"></button>' +
+      '</div>';
+    document.body.appendChild(el);
+    // Close when clicking the overlay backdrop
+    el.addEventListener('click', function (e) {
+      if (e.target === el) closePopup();
+    });
+  }());
+
+  function showPopup(type) {
+    var overlay = document.getElementById('poc-popup-overlay');
+    var icon    = document.getElementById('poc-popup-icon');
+    var title   = document.getElementById('poc-popup-title');
+    var body    = document.getElementById('poc-popup-body');
+    var btn     = document.getElementById('poc-popup-btn');
+    if (!overlay) return;
+
+    if (type === 'silver') {
+      icon.textContent = '👣';
+      title.textContent = 'Fußabdruck gesetzt – gut gemacht!';
+      body.innerHTML = 'Wandel beginnt im Gehen. Jetzt bist du einen Schritt weiter!<br><br><strong>Schaffst du auch den Handabdruck?</strong>';
+      btn.textContent = 'Weiter geht\'s!';
+      btn.onclick = function () { closePopup(); };
+    } else {
+      icon.textContent = '🤝';
+      title.textContent = 'Handabdruck hinterlassen – stark!';
+      body.innerHTML = 'Was du getan hast, wirkt weit über dich hinaus. Dein Beitrag wird Früchte tragen und lange wirken!<br><br><strong>Lust auf weitere Herausforderungen?</strong>';
+      btn.textContent = 'Weiter geht\'s!';
+      btn.onclick = function () {
+        closePopup();
+        if (current < visible.length - 1) goTo(current + 1);
+      };
+    }
+    overlay.classList.add('poc-popup-open');
+  }
+
+  function closePopup() {
+    var overlay = document.getElementById('poc-popup-overlay');
+    if (overlay) overlay.classList.remove('poc-popup-open');
+  }
 
   // ── Card navigation ────────────────────────────────────────────
   var track   = document.querySelector('.poc-cards-track');
@@ -110,27 +215,59 @@ document.addEventListener('DOMContentLoaded', function () {
   if (btnPrev) btnPrev.addEventListener('click', function () { goTo(current - 1); });
   if (btnNext) btnNext.addEventListener('click', function () { goTo(current + 1); });
 
-  // ── Category filter ────────────────────────────────────────────
+  // ── List category filter ────────────────────────────────────────
   document.addEventListener('click', function (e) {
-    var btn = e.target.closest('.poc-filter-btn');
+    var btn = e.target.closest('.poc-list-filter-bar .poc-filter-btn');
     if (!btn) return;
 
+    var wrap   = btn.closest('.poc-list-wrap');
     var filter = btn.dataset.filter;
 
-    document.querySelectorAll('.poc-filter-btn').forEach(function (b) {
+    btn.closest('.poc-list-filter-bar').querySelectorAll('.poc-filter-btn').forEach(function (b) {
       b.classList.toggle('poc-filter-active', b === btn);
     });
 
-    visible = [];
-    cards.forEach(function (card) {
-      var cat  = card.dataset.cat || '';
-      var show = filter === 'all' || cat === filter;
-      card.style.display = show ? '' : 'none';
-      if (show) visible.push(card);
-    });
+    if (wrap) {
+      wrap.querySelectorAll('.poc-list-card').forEach(function (card) {
+        var cat  = card.dataset.cat || '';
+        var show = filter === 'all' || cat === filter;
+        card.style.display = show ? '' : 'none';
+      });
+    }
+  });
 
-    current = 0;
-    goTo(0);
+  // ── Simplified list row click → navigate to full card ─────────────────────
+  document.addEventListener('click', function (e) {
+    var row = e.target.closest('.poc-list-card');
+    if (!row) return;
+    // Don't navigate when the user is interacting with a toggle
+    if (e.target.closest('.poc-toggle-btn')) return;
+
+    var postId     = row.dataset.postId;
+    var list       = row.closest('.poc-list');
+    var fullTabSel = list ? list.dataset.fullTab : '';
+
+    // Activate the tab that contains [poc_cards] if a selector was provided
+    if (fullTabSel) {
+      var tabEl = document.querySelector(fullTabSel);
+      if (tabEl) tabEl.click();
+    }
+
+    if (postId) {
+      document.dispatchEvent(new CustomEvent('poc:gotocard', { detail: { postId: postId } }));
+    }
+  });
+
+  // ── Respond to poc:gotocard event ─────────────────────────────────────────
+  document.addEventListener('poc:gotocard', function (e) {
+    var postId = e.detail && e.detail.postId;
+    if (!postId || !track) return;
+
+    var targetCard = document.getElementById('card-' + postId);
+    if (!targetCard) return;
+
+    var visIdx = visible.indexOf(targetCard);
+    if (visIdx >= 0) goTo(visIdx);
   });
 
 });

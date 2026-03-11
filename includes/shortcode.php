@@ -21,7 +21,8 @@ add_shortcode( 'poc_cards', function ( $atts ) {
         'post_type'      => 'poc_card',
         'posts_per_page' => intval( $atts['limit'] ),
         'post_status'    => 'publish',
-        'orderby'        => 'menu_order',
+        'meta_key'       => 'poc_order',
+        'orderby'        => 'meta_value_num',
         'order'          => 'ASC',
     ];
 
@@ -39,12 +40,6 @@ add_shortcode( 'poc_cards', function ( $atts ) {
         return '<p>Keine Karten gefunden.</p>';
     }
 
-    // ── Collect all category terms for filter bar ────────────────
-    $all_terms = get_terms( [
-        'taxonomy'   => 'card_category',
-        'hide_empty' => true,
-    ] );
-
     // ── SVG icons ────────────────────────────────────────────────
     $svg_fuss = poc_cards_svg_fuss();
     $svg_hand = poc_cards_svg_hand();
@@ -52,19 +47,7 @@ add_shortcode( 'poc_cards', function ( $atts ) {
     // ── Render ───────────────────────────────────────────────────
     ob_start();
 
-    // Category filter bar
-    if ( ! empty( $all_terms ) && empty( $atts['category'] ) ) : ?>
-    <div class="poc-filter-bar">
-        <button class="poc-filter-btn poc-filter-active" data-filter="all">Alle</button>
-        <?php foreach ( $all_terms as $term ) : ?>
-            <button class="poc-filter-btn" data-filter="<?php echo esc_attr( $term->slug ); ?>">
-                <?php echo esc_html( $term->name ); ?>
-            </button>
-        <?php endforeach; ?>
-    </div>
-    <?php endif; ?>
-
-    <?php // Navigation bar ?>
+    ?>
     <div class="poc-nav-wrapper">
         <button class="poc-nav-btn poc-nav-prev" aria-label="Vorherige Karte">← Vorherige</button>
         <span class="poc-nav-counter">Karte 1 von <?php echo intval( $query->post_count ); ?></span>
@@ -260,6 +243,195 @@ add_shortcode( 'poc_cards', function ( $atts ) {
         </div><?php // end .poc-cards-track ?>
     </div><?php // end .poc-cards-viewport ?>
 
+    <?php
+    return ob_get_clean();
+} );
+
+/**
+ * [poc_progress] shortcode — Fußabdruck & Handabdruck progress bars
+ *
+ * Usage:
+ *   [poc_progress]
+ */
+add_shortcode( 'poc_progress', function () {
+
+    $query = new WP_Query( [
+        'post_type'      => 'poc_card',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+    ] );
+
+    $total    = count( $query->posts );
+    $post_ids = array_map( 'intval', $query->posts );
+
+    if ( $total === 0 ) return '';
+
+    $svg_fuss = poc_cards_svg_fuss();
+    $svg_hand = poc_cards_svg_hand();
+
+    ob_start();
+    ?>
+    <div class="poc-progress-wrap"
+         data-post-ids="<?php echo esc_attr( wp_json_encode( $post_ids ) ); ?>"
+         data-total="<?php echo esc_attr( $total ); ?>">
+
+        <div class="poc-progress-rows">
+
+            <div class="poc-progress-row">
+                <div class="poc-pr-label">
+                    <span class="poc-pr-icon-silver"><?php echo $svg_fuss; ?></span>
+                    <span>Fußabdruck</span>
+                </div>
+                <div class="poc-progress-track">
+                    <div class="poc-progress-fill poc-fill-silver" style="width:0%"></div>
+                </div>
+                <div class="poc-pr-count poc-pr-count-silver">0 von <?php echo esc_html( $total ); ?> erledigt</div>
+            </div>
+
+            <div class="poc-progress-row">
+                <div class="poc-pr-label">
+                    <span class="poc-pr-icon-gold"><?php echo $svg_hand; ?></span>
+                    <span>Handabdruck</span>
+                </div>
+                <div class="poc-progress-track">
+                    <div class="poc-progress-fill poc-fill-gold" style="width:0%"></div>
+                </div>
+                <div class="poc-pr-count poc-pr-count-gold">0 von <?php echo esc_html( $total ); ?> erledigt</div>
+            </div>
+
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+} );
+
+/**
+ * [poc_cards_list] shortcode — simplified card list
+ *
+ * Usage:
+ *   [poc_cards_list]                          — all cards
+ *   [poc_cards_list category="mobilitaet"]    — filtered by slug
+ *   [poc_cards_list full_tab=".my-selector"]  — CSS selector of the tab trigger that shows [poc_cards]
+ */
+add_shortcode( 'poc_cards_list', function ( $atts ) {
+
+    $atts = shortcode_atts( [
+        'category' => '',
+        'limit'    => -1,
+        'full_tab' => '',
+    ], $atts, 'poc_cards_list' );
+
+    $args = [
+        'post_type'      => 'poc_card',
+        'posts_per_page' => intval( $atts['limit'] ),
+        'post_status'    => 'publish',
+        'meta_key'       => 'poc_order',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'ASC',
+    ];
+
+    if ( ! empty( $atts['category'] ) ) {
+        $args['tax_query'] = [ [
+            'taxonomy' => 'card_category',
+            'field'    => 'slug',
+            'terms'    => sanitize_text_field( $atts['category'] ),
+        ] ];
+    }
+
+    $query = new WP_Query( $args );
+
+    if ( ! $query->have_posts() ) {
+        return '<p>Keine Karten gefunden.</p>';
+    }
+
+    $svg_fuss = poc_cards_svg_fuss();
+    $svg_hand = poc_cards_svg_hand();
+
+    // ── Collect all category terms for filter bar ────────────────
+    $all_terms = get_terms( [
+        'taxonomy'   => 'card_category',
+        'hide_empty' => true,
+    ] );
+
+    ob_start();
+    ?>
+    <div class="poc-list-wrap">
+    <?php if ( ! empty( $all_terms ) && empty( $atts['category'] ) ) : ?>
+    <div class="poc-filter-bar poc-list-filter-bar">
+        <button class="poc-filter-btn poc-filter-active" data-filter="all">Alle</button>
+        <?php foreach ( $all_terms as $term ) : ?>
+            <button class="poc-filter-btn" data-filter="<?php echo esc_attr( $term->slug ); ?>">
+                <?php echo esc_html( $term->name ); ?>
+            </button>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+    <div class="poc-list" data-full-tab="<?php echo esc_attr( $atts['full_tab'] ); ?>">
+    <div class="poc-list-grid">
+
+    <?php while ( $query->have_posts() ) :
+        $query->the_post();
+        $post_id  = get_the_ID();
+        $title    = get_the_title();
+        $terms    = get_the_terms( $post_id, 'card_category' );
+        $cat_slug = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0]->slug : '';
+        $cat_name = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0]->name : '';
+
+        $fuss_ulike = intval( get_field( 'poc_fuss_ulike_id', $post_id ) );
+        $hand_ulike = intval( get_field( 'poc_hand_ulike_id', $post_id ) );
+
+        $poc_id_silver = 'card_' . $post_id . '_silver';
+        $poc_id_gold   = 'card_' . $post_id . '_gold';
+    ?>
+
+    <div class="poc-list-card" data-post-id="<?php echo esc_attr( $post_id ); ?>" data-cat="<?php echo esc_attr( $cat_slug ); ?>">
+
+        <div class="poc-list-card-header">
+            <?php if ( $cat_name ) : ?>
+            <span class="poc-category-badge"><?php echo esc_html( $cat_name ); ?></span>
+            <?php endif; ?>
+            <span class="poc-list-card-title"><?php echo esc_html( $title ); ?></span>
+            <!-- <button class="poc-list-goto-btn" aria-label="Vollversion anzeigen">→</button> -->
+        </div>
+
+        <div class="poc-action-block silver poc-list-card-action"
+             data-poc-id="<?php echo esc_attr( $poc_id_silver ); ?>"
+             data-ulike-id="<?php echo esc_attr( $fuss_ulike ); ?>">
+            <button class="poc-toggle-btn poc-list-action-btn poc-btn-silver" aria-label="Fußabdruck als erledigt markieren">
+                <span class="poc-lbtn-off">Fußabdruck offen</span>
+                <span class="poc-lbtn-on">Fußabdruck erledigt</span>
+            </button>
+            <div class="poc-list-action-meta">
+                <span class="poc-list-icon silver"><?php echo $svg_fuss; ?></span>
+                <?php if ( $fuss_ulike ) : ?>
+                <span class="poc-list-ulike"><?php echo do_shortcode( '[wp_ulike id="' . $fuss_ulike . '"]' ); ?></span>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="poc-action-block gold poc-list-card-action"
+             data-poc-id="<?php echo esc_attr( $poc_id_gold ); ?>"
+             data-ulike-id="<?php echo esc_attr( $hand_ulike ); ?>">
+            <button class="poc-toggle-btn poc-list-action-btn poc-btn-gold" aria-label="Handabdruck als erledigt markieren">
+                <span class="poc-lbtn-off">Handabdruck offen</span>
+                <span class="poc-lbtn-on">Handabdruck erledigt</span>
+            </button>
+            <div class="poc-list-action-meta">
+                <span class="poc-list-icon gold"><?php echo $svg_hand; ?></span>
+                <?php if ( $hand_ulike ) : ?>
+                <span class="poc-list-ulike"><?php echo do_shortcode( '[wp_ulike id="' . $hand_ulike . '"]' ); ?></span>
+                <?php endif; ?>
+            </div>
+        </div>
+
+    </div>
+
+    <?php endwhile; wp_reset_postdata(); ?>
+
+    </div>
+    </div>
+    </div>
     <?php
     return ob_get_clean();
 } );
