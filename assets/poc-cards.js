@@ -63,7 +63,15 @@ document.addEventListener('DOMContentLoaded', function () {
     updateListCards();
 
     if (isDone) {
-      showPopup(block.classList.contains('silver') ? 'silver' : 'gold');
+      var card = block.closest('.flip-card, .poc-list-card');
+      var bothDone = card &&
+        card.querySelector('.poc-action-block.silver.poc-done') &&
+        card.querySelector('.poc-action-block.gold.poc-done');
+      if (bothDone) {
+        showPopup('both');
+      } else {
+        showPopup(block.classList.contains('silver') ? 'silver' : 'gold');
+      }
     }
   });
 
@@ -160,10 +168,19 @@ document.addEventListener('DOMContentLoaded', function () {
       body.innerHTML = 'Wandel beginnt im Gehen. Jetzt bist du einen Schritt weiter!<br><br><strong>Schaffst du auch den Handabdruck?</strong>';
       btn.textContent = 'Weiter geht\'s!';
       btn.onclick = function () { closePopup(); };
-    } else {
+    } else if (type === 'gold') {
       icon.textContent = '🤝';
+      title.textContent = 'Handabdruck hinterlassen – stark!';
+      body.innerHTML = 'Du hast andere mitgenommen. Das ist der Moment, wo aus einer persönlichen Entscheidung etwas Gemeinsames wird. Was du gerade getan hast, wirkt weit über dich hinaus.';
+      btn.textContent = 'Weiter geht\'s!';
+      btn.onclick = function () {
+        closePopup();
+        if (current < visible.length - 1) goTo(current + 1);
+      };
+    } else {
+      icon.textContent = '⭐⭐⭐⭐⭐';
       title.textContent = 'Toll, du gehlörst zu den 1% der wirksamsten Spieler:innen.';
-      body.innerHTML = 'Was du getan hast, wirkt weit über dich hinaus. Dein Beitrag wird Früchte tragen und lange wirken!<br><br><strong>Lust auf weitere Herausforderungen?</strong>';
+      body.innerHTML = 'Du hast sowohl den Fuß- als auch den Handabdruck gesetzt. Das ist außergewöhnlich!';
       btn.textContent = 'Weiter geht\'s!';
       btn.onclick = function () {
         closePopup();
