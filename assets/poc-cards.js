@@ -155,13 +155,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!overlay) return;
 
     if (type === 'silver') {
-      icon.textContent = '⭐⭐⭐⭐⭐';
+      icon.textContent = '👣';
       title.textContent = 'Fußabdruck gesetzt – gut gemacht!';
       body.innerHTML = 'Wandel beginnt im Gehen. Jetzt bist du einen Schritt weiter!<br><br><strong>Schaffst du auch den Handabdruck?</strong>';
       btn.textContent = 'Weiter geht\'s!';
       btn.onclick = function () { closePopup(); };
     } else {
-      icon.textContent = '⭐⭐⭐⭐⭐';
+      icon.textContent = '🤝';
       title.textContent = 'Toll, du gehlörst zu den 1% der wirksamsten Spieler:innen.';
       body.innerHTML = 'Was du getan hast, wirkt weit über dich hinaus. Dein Beitrag wird Früchte tragen und lange wirken!<br><br><strong>Lust auf weitere Herausforderungen?</strong>';
       btn.textContent = 'Weiter geht\'s!';
