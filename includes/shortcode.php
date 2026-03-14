@@ -323,6 +323,7 @@ add_shortcode( 'poc_cards_list', function ( $atts ) {
         'category' => '',
         'limit'    => -1,
         'full_tab' => '',
+        'full_url' => '',   // URL of the page containing [poc_cards] (for cross-page navigation)
     ], $atts, 'poc_cards_list' );
 
     $args = [
@@ -373,7 +374,9 @@ add_shortcode( 'poc_cards_list', function ( $atts ) {
         <?php endforeach; ?>
     </div>
     <?php endif; ?>
-    <div class="poc-list" data-full-tab="<?php echo esc_attr( $atts['full_tab'] ); ?>">
+    <div class="poc-list"
+         data-full-tab="<?php echo esc_attr( $atts['full_tab'] ); ?>"
+         data-full-url="<?php echo esc_url( $atts['full_url'] ); ?>">
     <div class="poc-list-grid">
 
     <?php while ( $query->have_posts() ) :

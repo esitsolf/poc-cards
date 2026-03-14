@@ -265,8 +265,16 @@ document.addEventListener('DOMContentLoaded', function () {
     var postId     = row.dataset.postId;
     var list       = row.closest('.poc-list');
     var fullTabSel = list ? list.dataset.fullTab : '';
+    var fullUrl    = list ? list.dataset.fullUrl  : '';
 
-    // Activate the tab that contains [poc_cards] if a selector was provided
+    // Cross-page navigation: redirect to the cards page with ?poc_card=POST_ID
+    if (fullUrl && postId) {
+      var sep = fullUrl.indexOf('?') === -1 ? '?' : '&';
+      window.location.href = fullUrl + sep + 'poc_card=' + encodeURIComponent(postId);
+      return;
+    }
+
+    // Same-page: activate the tab that contains [poc_cards] if a selector was provided
     if (fullTabSel) {
       var tabEl = document.querySelector(fullTabSel);
       if (tabEl) tabEl.click();
@@ -295,5 +303,16 @@ document.addEventListener('DOMContentLoaded', function () {
       scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
+
+  // ── Auto-navigate on page load if ?poc_card=POST_ID is in the URL ──────────
+  (function () {
+    var params  = new URLSearchParams(window.location.search);
+    var postId  = params.get('poc_card');
+    if (!postId) return;
+    // Use a small delay to let the layout settle
+    setTimeout(function () {
+      document.dispatchEvent(new CustomEvent('poc:gotocard', { detail: { postId: postId } }));
+    }, 100);
+  }());
 
 });
