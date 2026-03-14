@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
       btn.textContent = 'Weiter geht\'s!';
       btn.onclick = function () { closePopup(); };
     } else if (type === 'gold') {
-      icon.textContent = '🤝';
+      icon.textContent = "🖐️";
       title.textContent = 'Handabdruck hinterlassen – stark!';
       body.innerHTML = 'Du hast andere mitgenommen. Das ist der Moment, wo aus einer persönlichen Entscheidung etwas Gemeinsames wird. Was du gerade getan hast, wirkt weit über dich hinaus.';
       btn.textContent = 'Weiter geht\'s!';
@@ -315,3 +315,4 @@ document.addEventListener('DOMContentLoaded', function () {
   }());
 
 });
+
