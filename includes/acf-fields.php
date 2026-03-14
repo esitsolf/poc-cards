@@ -16,6 +16,18 @@ add_action( 'acf/init', function () {
         'title'  => 'Karteninhalte',
         'fields' => [
 
+            // ── Reihenfolge ──────────────────────────────────────────
+
+            [
+                'key'          => 'field_poc_order',
+                'label'        => 'Reihenfolge',
+                'name'         => 'poc_order',
+                'type'         => 'number',
+                'min'          => 0,
+                'default_value'=> 0,
+                'instructions' => 'Sortierung der Karten (aufsteigend, 0 = keine bestimmte Reihenfolge).',
+            ],
+
             // ── General ─────────────────────────────────────────────
 
             [
