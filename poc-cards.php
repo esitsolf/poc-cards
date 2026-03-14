@@ -3,9 +3,9 @@
  * Plugin Name: Action Cards
  * Plugin URI:  https://pioneersofchange.org
  * Description: Action cards for Pioneers of Change — Custom Post Type, ACF fields, and shortcode renderer.
- * Version:     beta 1.0.8
+ * Version:     1.0.0
  * Author:      Pioneers of Change
- * Text Domain: actionsakrten
+ * Text Domain: actionskarten
  */
 
 defined( 'ABSPATH' ) || exit;
