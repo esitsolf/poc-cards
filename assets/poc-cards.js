@@ -202,18 +202,12 @@ document.addEventListener('DOMContentLoaded', function () {
   var btnPrev = document.querySelector('.poc-nav-prev');
   var btnNext = document.querySelector('.poc-nav-next');
 
-  if (!track) return;
-
-  var cards   = Array.from(track.children).filter(function (el) {
-    return el.classList.contains('flip-card');
-  });
-
-  // visible = subset of cards currently shown (changes with filter)
-  var visible  = cards.slice();
-  var current  = 0; // index within visible
+  // visible / current are only meaningful when [poc_cards] is on the page
+  var visible = [];
+  var current = 0;
 
   function goTo(index) {
-    if (index < 0 || index >= visible.length) return;
+    if (!track || index < 0 || index >= visible.length) return;
     current = index;
 
     // Offset of the target card relative to the first visible card
@@ -229,10 +223,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnNext) btnNext.disabled = current === visible.length - 1;
   }
 
-  goTo(0);
-
-  if (btnPrev) btnPrev.addEventListener('click', function () { goTo(current - 1); });
-  if (btnNext) btnNext.addEventListener('click', function () { goTo(current + 1); });
+  if (track) {
+    var cards = Array.from(track.children).filter(function (el) {
+      return el.classList.contains('flip-card');
+    });
+    visible = cards.slice();
+    goTo(0);
+    if (btnPrev) btnPrev.addEventListener('click', function () { goTo(current - 1); });
+    if (btnNext) btnNext.addEventListener('click', function () { goTo(current + 1); });
+  }
 
   // ── List category filter ────────────────────────────────────────
   document.addEventListener('click', function (e) {
