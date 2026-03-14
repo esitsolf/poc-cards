@@ -287,6 +287,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var visIdx = visible.indexOf(targetCard);
     if (visIdx >= 0) goTo(visIdx);
+
+    // Scroll to the top of the cards section
+    var navWrapper = document.querySelector('.poc-nav-wrapper');
+    var scrollTarget = navWrapper || track;
+    if (scrollTarget) {
+      scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 
 });
