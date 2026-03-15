@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
       };
     } else {
       icon.textContent = '⭐⭐⭐⭐⭐';
-      title.textContent = 'Toll, du gehlörst zu den 1% der wirksamsten Spieler:innen.';
+      title.textContent = 'Toll, du gehörst zu den 1% der wirksamsten Spieler:innen.';
       body.innerHTML = 'Du hast sowohl den Fuß- als auch den Handabdruck gesetzt. Das ist außergewöhnlich!';
       btn.textContent = 'Weiter geht\'s!';
       btn.onclick = function () {
