@@ -714,8 +714,8 @@
   }
   .poc-cards-track > .flip-card {
     flex: 0 0 100vw;
-    min-width: 100vw;
-    max-width: 100vw;
+    min-width: 90vw;
+    max-width: 90vw;
   }
 }
 
